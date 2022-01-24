@@ -3,6 +3,8 @@
 # for reference, see https://github.com/riscv/riscv-isa-manual/releases/download/Priv-v1.12/riscv-privileged-20211203.pdf 
 from enum import Enum
 
+from util import make_process
+
 # RISC-V has four privilege levels, one of them is reserved
 # as we are writing an operating system running at supervisor level
 # we can pay less attention to machine level, as the interaction between
@@ -131,6 +133,8 @@ class Machine():
             # after handling the trap
             # use sret to continue the execution of user program
             self.sret()
+
+        @make_process
         def user_program():
             # print("hello from user level")
             # wait, can we just do that here
@@ -143,9 +147,8 @@ class Machine():
             self.general[10] = "hello from user" # put syscall argument in a0-a5 (should be a pointer to string)
             self.general[17] = 1 # put syscall number in a7, let's just use 1 for print
             print("debug: calling ecall from user level to print string")
-            def fn():
-                print("debug: back at user level after ecall")
-            self.ecall(fn) # dirty hack here, but I cannot think of a better way to get sepc in python
+            yield self.ecall
+            print("debug: back at user level after ecall")
         # when initializing our operation system
         # we should first set stvec to the address
         # of our trap handler, for simplicity in implementation
