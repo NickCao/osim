@@ -91,10 +91,10 @@ class Machine():
         print(f"machine: we are now at {self.priv} level")
         # jump to sepc
         self.sepc.sepc()
-    def ecall(self, sepc):
+    def ecall(self, next):
         self.scause.interrupt = False
         self.sstatus.spp = self.priv 
-        self.sepc.sepc = sepc 
+        self.sepc.sepc = next # should be set to the instruction after ecall
         if self.priv == PrivilegeLevel.User:
             self.scause.code = 8 # environment call from user level
             self.priv = PrivilegeLevel.Supervisor
