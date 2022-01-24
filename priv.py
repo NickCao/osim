@@ -139,14 +139,14 @@ class Machine():
             # in every userland application
             # instead we transfer control to the operating system
             # so that it can do the printing for us
-            # can we call this, a syscall
+            # and we call this, a syscall
             self.general[10] = "hello from user" # put syscall argument in a0-a5 (should be a pointer to string)
             self.general[17] = 1 # put syscall number in a7, let's just use 1 for print
             print("debug: calling ecall from user level to print string")
             def fn():
                 print("debug: back at user level after ecall")
             self.ecall(fn) # dirty hack here, but I cannot think of a better way to get sepc in python
-        # when initializing out operation system
+        # when initializing our operation system
         # we should first set stvec to the address
         # of our trap handler, for simplicity in implementation
         # we use the direct mode
