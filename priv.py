@@ -144,11 +144,13 @@ class Machine():
             # instead we transfer control to the operating system
             # so that it can do the printing for us
             # and we call this, a syscall
-            self.general[10] = "hello from user" # put syscall argument in a0-a5 (should be a pointer to string)
-            self.general[17] = 1 # put syscall number in a7, let's just use 1 for print
-            print("debug: calling ecall from user level to print string")
-            yield self.ecall
-            print("debug: back at user level after ecall")
+            for i in range(3):
+                self.general[10] = f"hello from user round {i}" # put syscall argument in a0-a5 (should be a pointer to string)
+                self.general[17] = 1 # put syscall number in a7, let's just use 1 for print
+                print("debug: calling ecall from user level to print string")
+                yield self.ecall
+                print("debug: back at user level after ecall")
+
         # when initializing our operation system
         # we should first set stvec to the address
         # of our trap handler, for simplicity in implementation
